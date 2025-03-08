@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PromoCodeFactory.Core.Abstractions.Repositories;
 using PromoCodeFactory.Core.Domain.PromoCodeManagement;
 using PromoCodeFactory.DataAccess.Repositories;
 using PromoCodeFactory.WebHost.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,10 +18,10 @@ namespace PromoCodeFactory.WebHost.Controllers
     public class CustomersController
         : ControllerBase
     {
-        private readonly EfRepository<Customer> _customerRepository;
-        private readonly EfRepository<PromoCode> _promoCodeRepository;
+        private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<PromoCode> _promoCodeRepository;
 
-        public CustomersController(EfRepository<Customer> customerRepository, EfRepository<PromoCode> promoCodeRepository)
+        public CustomersController(IRepository<Customer> customerRepository, IRepository<PromoCode> promoCodeRepository)
         {
             _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
             _promoCodeRepository = promoCodeRepository ?? throw new ArgumentNullException(nameof(promoCodeRepository));
@@ -39,11 +41,11 @@ namespace PromoCodeFactory.WebHost.Controllers
                 FirstName = c.FirstName,
                 LastName = c.LastName,
                 Email = c.Email,
-                Preferences = c.CustomerPreferences.Select(cp => new PreferenceResponse
+                Preferences = c.CustomerPreferences?.Select(cp => new PreferenceResponse
                 {
                     Id = cp.Preference.Id,
                     Name = cp.Preference.Name
-                }).ToList()
+                }).ToList() ?? new List<PreferenceResponse>() // Если null, вернуть пустой список
             });
 
             return Ok(response);

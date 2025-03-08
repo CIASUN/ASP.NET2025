@@ -1,3 +1,6 @@
+using System.IO;
+using System.Reflection;
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +13,7 @@ using PromoCodeFactory.Core.Domain.Administration;
 using PromoCodeFactory.Core.Domain.PromoCodeManagement;
 using PromoCodeFactory.DataAccess.Data;
 using PromoCodeFactory.DataAccess.Repositories;
+using Microsoft.OpenApi.Models;
 
 namespace PromoCodeFactory.WebHost
 {
@@ -26,15 +30,29 @@ namespace PromoCodeFactory.WebHost
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // Добавление Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "PromoCodeFactory API",
+                    Version = "v1",
+                    Description = "API для управления промокодами и клиентами."
+                });
+
+                // Включение XML-комментариев для Swagger
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
+
+            services.AddScoped<IRepository<Customer>, EfRepository<Customer>>();
+            services.AddScoped<IRepository<PromoCode>, EfRepository<PromoCode>>();
+            services.AddScoped<IRepository<Preference>, EfRepository<Preference>>();
+            services.AddScoped<IRepository<Role>, EfRepository<Role>>();
+            services.AddScoped<IRepository<Employee>, EfRepository<Employee>>();
+
             services.AddControllers();
-            services.AddScoped(typeof(IRepository<Employee>), (x) =>
-                new InMemoryRepository<Employee>(FakeDataFactory.Employees));
-            services.AddScoped(typeof(IRepository<Role>), (x) =>
-                new InMemoryRepository<Role>(FakeDataFactory.Roles));
-            services.AddScoped(typeof(IRepository<Preference>), (x) =>
-                new InMemoryRepository<Preference>(FakeDataFactory.Preferences));
-            services.AddScoped(typeof(IRepository<Customer>), (x) =>
-                new InMemoryRepository<Customer>(FakeDataFactory.Customers));
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<DatabaseContext>(optionsBuilder => optionsBuilder.UseSqlite(connectionString)); 
@@ -44,8 +62,8 @@ namespace PromoCodeFactory.WebHost
                 options.Version = "1.0";
             });
 
-            services.AddScoped<IRepository<Customer>, EfRepository<Customer>>();
-            services.AddScoped<IRepository<PromoCode>, EfRepository<PromoCode>>();
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,8 +77,7 @@ namespace PromoCodeFactory.WebHost
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
-                context.Employees.AddRange(FakeDataFactory.Employees);
-                context.Roles.AddRange(FakeDataFactory.Roles);
+                context.Employees.AddRange(FakeDataFactory.Employees); //Roles создадутся как зависымые автоматом
                 context.Preferences.AddRange(FakeDataFactory.Preferences);
                 context.Customers.AddRange(FakeDataFactory.Customers);
 
