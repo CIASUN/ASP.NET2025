@@ -74,8 +74,8 @@ namespace PromoCodeFactory.WebHost
                 app.UseDeveloperExceptionPage();
 
                 #region Инициализация базы данных тестовыми данными
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
+                //context.Database.EnsureDeleted();
+                //context.Database.EnsureCreated();
 
                 context.Employees.AddRange(FakeDataFactory.Employees); //Roles создадутся как зависымые автоматом
                 context.Preferences.AddRange(FakeDataFactory.Preferences);

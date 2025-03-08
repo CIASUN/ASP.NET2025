@@ -10,7 +10,7 @@ namespace PromoCodeFactory.Core.Domain.PromoCodeManagement
     {
         public string Code { get; set; }
 
-        public string ServiceInfo { get; set; }
+        //public string ServiceInfo { get; set; } для удаления миграцией Пункт 8
 
         public DateTime BeginDate { get; set; }
 

@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PromoCodeFactory.Core.Abstractions.Repositories;
 using PromoCodeFactory.Core.Domain.PromoCodeManagement;
-using PromoCodeFactory.DataAccess.Repositories;
+using PromoCodeFactory.WebHost.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -46,7 +45,7 @@ namespace PromoCodeFactory.WebHost.Controllers
                 BeginDate = DateTime.UtcNow, // Начало действия промокода
                 EndDate = DateTime.UtcNow.AddDays(promoCodeRequest.DurationInDays), // Конец действия промокода
                 PreferenceId = (await _preferenceRepository.GetAllAsync())
-                    .FirstOrDefault(p => p.Name == preferenceName)?.Id
+                    .FirstOrDefault(p => p.Name == preferenceName).Id
             };
 
             if (promoCode.PreferenceId == null)
