@@ -14,6 +14,10 @@ namespace PromoCodeFactory.Core.Domain.PromoCodeManagement
 
         public string Email { get; set; }
 
-        //TODO: Списки Preferences и Promocodes 
+        // Связь с Preference (Many-to-Many через CustomerPreference)
+        public ICollection<CustomerPreference> CustomerPreferences { get; set; }
+
+        // Связь с PromoCode (One-to-Many)
+        public ICollection<PromoCode> PromoCodes { get; set; }
     }
 }

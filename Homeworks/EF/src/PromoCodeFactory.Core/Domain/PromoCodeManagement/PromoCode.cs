@@ -20,6 +20,14 @@ namespace PromoCodeFactory.Core.Domain.PromoCodeManagement
 
         public Employee PartnerManager { get; set; }
 
+        // Связь с Customer (One-to-Many)
+        public Guid CustomerId { get; set; }
+
+        public Customer Customer { get; set; }
+
+        // Связь с Preference (One-to-Many)
+        public Guid PreferenceId { get; set; }
+
         public Preference Preference { get; set; }
     }
 }

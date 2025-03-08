@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PromoCodeFactory.Core.Abstractions.Repositories;
@@ -14,6 +17,13 @@ namespace PromoCodeFactory.WebHost
     {
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -26,6 +36,8 @@ namespace PromoCodeFactory.WebHost
             services.AddScoped(typeof(IRepository<Customer>), (x) =>
                 new InMemoryRepository<Customer>(FakeDataFactory.Customers));
 
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<DatabaseContext>(optionsBuilder => optionsBuilder.UseSqlite(connectionString)); 
             services.AddOpenApiDocument(options =>
             {
                 options.Title = "PromoCode Factory API Doc";
@@ -34,11 +46,23 @@ namespace PromoCodeFactory.WebHost
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DatabaseContext context)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                #region »нициализаци€ базы данных тестовыми данными
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                context.Employees.AddRange(FakeDataFactory.Employees);
+                context.Roles.AddRange(FakeDataFactory.Roles);
+                context.Preferences.AddRange(FakeDataFactory.Preferences);
+                context.Customers.AddRange(FakeDataFactory.Customers);
+
+                context.SaveChanges();
+                #endregion
             }
             else
             {
@@ -59,6 +83,8 @@ namespace PromoCodeFactory.WebHost
             {
                 endpoints.MapControllers();
             });
+
+
         }
     }
 }
