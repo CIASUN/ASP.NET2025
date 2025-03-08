@@ -43,6 +43,9 @@ namespace PromoCodeFactory.WebHost
                 options.Title = "PromoCode Factory API Doc";
                 options.Version = "1.0";
             });
+
+            services.AddScoped<IRepository<Customer>, EfRepository<Customer>>();
+            services.AddScoped<IRepository<PromoCode>, EfRepository<PromoCode>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
