@@ -1,7 +1,5 @@
-﻿using System;
-using PromoCodeFactory.Core.Domain.PromoCodeManagement;
-
-namespace PromoCodeFactory.WebHost.Models
+﻿
+namespace PromoCodeFactory.Core.Models.Models
 {
     public class SetPartnerPromoCodeLimitRequest
     {

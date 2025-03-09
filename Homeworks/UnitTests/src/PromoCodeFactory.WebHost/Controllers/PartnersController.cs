@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using PromoCodeFactory.Core.Abstractions.Repositories;
 using PromoCodeFactory.Core.Domain.PromoCodeManagement;
 using PromoCodeFactory.WebHost.Models;
+using PromoCodeFactory.Core.Models.Models;
+using PromoCodeFactory.Core.Services;
 
 namespace PromoCodeFactory.WebHost.Controllers
 {
@@ -18,10 +20,12 @@ namespace PromoCodeFactory.WebHost.Controllers
         : ControllerBase
     {
         private readonly IRepository<Partner> _partnersRepository;
+        private readonly PartnerLimitService _partnerLimitService;
 
-        public PartnersController(IRepository<Partner> partnersRepository)
+        public PartnersController(IRepository<Partner> partnersRepository, PartnerLimitService partnerLimitService)
         {
             _partnersRepository = partnersRepository;
+            _partnerLimitService = partnerLimitService;
         }
 
         [HttpGet]
@@ -77,47 +81,22 @@ namespace PromoCodeFactory.WebHost.Controllers
         [HttpPost("{id}/limits")]
         public async Task<IActionResult> SetPartnerPromoCodeLimitAsync(Guid id, SetPartnerPromoCodeLimitRequest request)
         {
-            var partner = await _partnersRepository.GetByIdAsync(id);
-
-            if (partner == null)
-                return NotFound();
-            
-            //Если партнер заблокирован, то нужно выдать исключение
-            if (!partner.IsActive)
-                return BadRequest("Данный партнер не активен");
-            
-            //Установка лимита партнеру
-            var activeLimit = partner.PartnerLimits.FirstOrDefault(x => 
-                !x.CancelDate.HasValue);
-            
-            if (activeLimit != null)
+            try
             {
-                //Если партнеру выставляется лимит, то мы 
-                //должны обнулить количество промокодов, которые партнер выдал, если лимит закончился, 
-                //то количество не обнуляется
-                partner.NumberIssuedPromoCodes = 0;
-                
-                //При установке лимита нужно отключить предыдущий лимит
-                activeLimit.CancelDate = DateTime.Now;
+                var result = await _partnerLimitService.SetPartnerPromoCodeLimitAsync(id, request);
+                return CreatedAtAction(
+                    nameof(GetPartnerLimitAsync),
+                    new { id = result.PartnerId, limitId = result.LimitId },
+                    null);
             }
-
-            if (request.Limit <= 0)
-                return BadRequest("Лимит должен быть больше 0");
-            
-            var newLimit = new PartnerPromoCodeLimit()
+            catch (InvalidOperationException ex) when (ex.Message == "Партнер не найден")
             {
-                Limit = request.Limit,
-                Partner = partner,
-                PartnerId = partner.Id,
-                CreateDate = DateTime.Now,
-                EndDate = request.EndDate
-            };
-            
-            partner.PartnerLimits.Add(newLimit);
-
-            await _partnersRepository.UpdateAsync(partner);
-            
-            return CreatedAtAction(nameof(GetPartnerLimitAsync), new {id = partner.Id, limitId = newLimit.Id}, null);
+                return NotFound(ex.Message); // Возвращаем 404, если партнер не найден
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message); // Возвращаем 400 для других ошибок
+            }
         }
         
         [HttpPost("{id}/canceledLimits")]

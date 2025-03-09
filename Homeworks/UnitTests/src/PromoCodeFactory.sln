@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PromoCodeFactory.Core", "Pr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PromoCodeFactory.UnitTests", "PromoCodeFactory.UnitTests\PromoCodeFactory.UnitTests.csproj", "{28FDE1D4-2524-4494-9791-A903FD1B90D1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PromoCodeFactory.Core.Models", "PromoCodeFactory.Core.Models\PromoCodeFactory.Core.Models.csproj", "{CF984489-DD14-4AFB-BB3F-4F2FEC3999FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{28FDE1D4-2524-4494-9791-A903FD1B90D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28FDE1D4-2524-4494-9791-A903FD1B90D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28FDE1D4-2524-4494-9791-A903FD1B90D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF984489-DD14-4AFB-BB3F-4F2FEC3999FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF984489-DD14-4AFB-BB3F-4F2FEC3999FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF984489-DD14-4AFB-BB3F-4F2FEC3999FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF984489-DD14-4AFB-BB3F-4F2FEC3999FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
