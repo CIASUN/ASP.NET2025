@@ -95,7 +95,7 @@ namespace PromoCodeFactory.WebHost.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(ex.Message); // Возвращаем 400 для других ошибок
+                return BadRequest(ex.Message); // Возвращаем 400  для других ошибок
             }
         }
         
