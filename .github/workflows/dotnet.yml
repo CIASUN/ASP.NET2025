@@ -1,0 +1,31 @@
+name: .NET Tests
+
+on:
+  push:
+    branches:
+      - HomeWork_1_6_UnitTests    # Запускать при пуше в ветку main
+  pull_request:
+    branches:
+      - HomeWork_1_6_UnitTests    # Запускать при создании pull request в ветку main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Используем последнюю версию Ubuntu
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3  # Клонируем репозиторий
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore Homeworks/UnitTests/src/PromoCodeFactory.sln  # путь к файлу решения
+
+      - name: Build
+        run: dotnet build Homeworks/UnitTests/src/PromoCodeFactory.sln --configuration Release --no-restore  # Собираем проект
+
+      - name: Run tests
+        run: dotnet test Homeworks/UnitTests/src/PromoCodeFactory.UnitTests/PromoCodeFactory.UnitTests.csproj --no-build --verbosity normal  # Запускаем тесты
