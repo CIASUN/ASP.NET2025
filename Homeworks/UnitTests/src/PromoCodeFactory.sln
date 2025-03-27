@@ -13,6 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PromoCodeFactory.UnitTests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PromoCodeFactory.Core.Models", "PromoCodeFactory.Core.Models\PromoCodeFactory.Core.Models.csproj", "{CF984489-DD14-4AFB-BB3F-4F2FEC3999FE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{886DEA69-C9E2-4CD4-8C18-4A64FC32DF74}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{C6305E0F-7952-44AC-A45B-EB92C0177EC0}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet.yml = dotnet.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +49,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C6305E0F-7952-44AC-A45B-EB92C0177EC0} = {886DEA69-C9E2-4CD4-8C18-4A64FC32DF74}
 	EndGlobalSection
 EndGlobal
